@@ -3,7 +3,12 @@
 This web app is to be used alongside the https://www.lernard.com Jenkins course.
 It was created very quickly using an automated tool, and although the details of how this was done do not relate to the course, if you're interested in creating you own, you can learn more below from the automatically generated readme that accompanies the app. 
 
-From the perspective of learning Jenkins, you do not need to know any of the below. All course specific information is provided in the course itself.
+## Using the Jenkinsfiles
+
+The jenkinsfiles for each section all live in the root of the repo, but as the chapter progresses they get renamed to be suffixed with their appropriate section name. 
+Only the jenkinsfile with the exact name "Jenkinsfile" will be picked up by Jenkins, so if you are copying this repo to follow along with a section without having to write your own code, you will need to rename the appropriate file, eg:
+
+```rm Jenkinsfile-section4 Jenkinsfile```
 
 ## Creation
 
