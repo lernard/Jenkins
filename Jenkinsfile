@@ -7,6 +7,9 @@ pipeline {
   environment {
     sitename = "www.lernardtest.com"
   }
+  parameters {
+    choice(name: 'STRICTHOST', choices: ['No', 'Yes'], description: 'Strict host checking')
+  }
   stages {
     stage('Clone Git') {
       steps {
@@ -26,7 +29,7 @@ pipeline {
     stage('Deploy') {
       when {branch 'master'}
       steps {
-        sh "scp -rv -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null build/* ${username}@${serverip}:/var/www/${sitename}/"
+        sh "scp -rv -o StrictHostKeyChecking=${params.STRICTHOST} -o UserKnownHostsFile=/dev/null build/* ${username}@${serverip}:/var/www/${sitename}/"
       }
     }
   }
