@@ -13,7 +13,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Section5
+          Section5 - triggered automatically
         </a>
       </header>
     </div>
