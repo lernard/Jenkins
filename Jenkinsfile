@@ -43,4 +43,9 @@ pipeline {
       }
     }
   }
+  post {
+    always {
+      echo 'Send an email or something like that'
+    }
+  }
 }
