@@ -1,5 +1,5 @@
 // Define variables
-def serverip = "3.84.143.200"
+def serverip
 def username = "ubuntu"
 
 pipeline {
@@ -12,40 +12,26 @@ pipeline {
     choice(name: 'STRICTHOST', choices: ['No', 'Yes'], description: 'Strict host checking')
   }
   stages {
-    stage('Clone Git') {
+    stage ('Provision - Terraform') {
       steps {
-        checkout scm
-      }
-    }
-    stage('Install Dependencies') {
-      steps {
-        sh 'npm install'
-      }
-    }
-    stage('Build and Test') {
-      parallel {
-        stage('Build') {
-          steps {
-            sh 'npm run build'
-          }
-        }
-        stage('Test') {
-          steps {
-            sh 'npm test -- --watchAll=false'
+        dir('Ansible') {
+          git branch: 'master',
+          credentialsId: 'a782029b-4767-494a-8a0b-fce90ae7df34',
+          url: 'https://github.com/lernard/Ansible.git'
+          sh """
+            cd terraform_web_server/
+            terraform init
+            terraform apply -auto-approve
+            """
+          script {
+              serverip = sh (
+              script: 'aws ec2 describe-instances --filter "Name=tag:Name,Values=lernard_webserver" --query "Reservations[*].Instances[*].PublicIpAddress" --output=text',
+              returnStdout: true
+            ).trim()
+          echo "The server IP is ${serverip}"
           }
         }
       }
-    }
-    stage('Deploy') {
-      when {branch 'master'}
-      steps {
-        sh "scp -rv -o StrictHostKeyChecking=${params.STRICTHOST} -o UserKnownHostsFile=/dev/null build/* ${username}@${serverip}:/var/www/${sitename}/"
-      }
-    }
-  }
-  post {
-    always {
-      echo 'Send an email or something like that'
     }
   }
 }
