@@ -9,10 +9,12 @@ pipeline {
     sitename = "www.lernardtest.com"
   }
   parameters {
-    choice(name: 'STRICTHOST', choices: ['No', 'Yes'], description: 'Strict host checking')
+    choice(name: 'Provision', choices: ['No', 'Yes'], description: 'Toggle provisioning an instance')
+    choice(name: 'Configure', choices: ['No', 'Yes'], description: 'Toggle configuring an instance')
   }
   stages {
     stage ('Provision - Terraform') {
+      when {expression { params.Provision == 'Yes'}}
       steps {
         dir('Ansible') {
           git branch: 'master',
@@ -34,6 +36,7 @@ pipeline {
       }
     }
     stage ('Configure - Ansible') {
+      when {expression { params.Configure == 'Yes'}}
       steps {
         dir('Ansible') {
           sh """
@@ -41,7 +44,7 @@ pipeline {
             rm -f hosts
             echo "[web]\nweb1 ansible_host=${serverip}" > hosts
             while ! nc -z -w 5 ${serverip} 22; do echo "Waiting for server..."; sleep 5; done
-            ansible-playbook -i hosts playbook_web.yml 
+            ansible-playbook -i hosts 
           """
         }
       }
