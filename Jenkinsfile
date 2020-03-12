@@ -44,7 +44,7 @@ pipeline {
             rm -f hosts
             echo "[web]\nweb1 ansible_host=${serverip}" > hosts
             while ! nc -z -w 5 ${serverip} 22; do echo "Waiting for server..."; sleep 5; done
-            ansible-playbook -i hosts 
+            ansible-playbook -i hosts playbook_web.yml
           """
         }
       }
