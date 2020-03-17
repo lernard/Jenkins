@@ -3,7 +3,7 @@ def serverip
 def username = "ubuntu"
 
 pipeline {
-  agent any
+  agent { label 'lernardagent'}
   triggers { pollSCM('H/15 * * * *')}
   environment {
     sitename = "www.lernardtest.com"
