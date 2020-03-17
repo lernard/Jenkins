@@ -14,6 +14,7 @@ pipeline {
   }
   stages {
     stage ('Provision - Terraform') {
+      agent { label 'master'}
       when {expression { params.Provision == 'Yes'}}
       steps {
         dir('Ansible') {
@@ -36,6 +37,7 @@ pipeline {
       }
     }
     stage ('Configure - Ansible') {
+      agent { label 'master'}
       when {expression { params.Configure == 'Yes'}}
       steps {
         dir('Ansible') {
@@ -71,7 +73,9 @@ pipeline {
     stage('Deploy') {
       when {branch 'master'}
       steps {
-        sh "scp -rv -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null build/* ${username}@${serverip}:/var/www/${sitename}/"
+        sshagent(credentials : ['Agentkey']) {
+          sh "scp -rv -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null build/* ${username}@${serverip}:/var/www/${sitename}/"
+        }
       }
     }
   }
